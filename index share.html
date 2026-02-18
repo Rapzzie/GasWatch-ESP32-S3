@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>GasWatch</title>
+
+<!-- ===================== LIBRARY FIREBASE ===================== -->
+<!-- Firebase v8 untuk Web -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<!-- ===================== STYLE HALAMAN ===================== -->
+<style>
+body{
+  font-family: Arial;
+  text-align:center;
+  /* Background gradient biru */
+  background: linear-gradient(135deg,#6EC6FF,#1E88E5);
+  color:white;
+}
+
+.card{
+  background:white;
+  color:#333;
+  width:320px;
+  margin:60px auto;
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+.value{
+  font-size:42px;
+  font-weight:bold;
+}
+
+.status{
+  font-size:22px;
+  margin-top:15px;
+  padding:10px;
+  border-radius:12px;
+}
+
+.safe{
+  background:#4CAF50; /* hijau untuk status aman */
+  color:white;
+}
+
+.danger{
+  background:#E53935; /* merah untuk status bahaya */
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===================== HEADER ===================== -->
+<h1>💙 GasWatch</h1>
+
+<!-- ===================== KARTU DATA GAS ===================== -->
+<div class="card">
+  <h2>Nilai Gas</h2>
+  <!-- Nilai gas realtime -->
+  <div id="gasValue" class="value">0</div>
+  <!-- Status aman atau bahaya -->
+  <div id="status" class="status safe">AMAN</div>
+</div>
+
+<!-- ===================== SCRIPT FIREBASE ===================== -->
+<script>
+// ===================== KONFIGURASI FIREBASE =====================
+// Ganti dengan data Firebase-mu sendiri
+var firebaseConfig = {
+  apiKey: "ISI_API_KEY",            // API Key Firebase
+  authDomain: "ISI_AUTHDOMAIN",     // Auth Domain Firebase
+  databaseURL: "ISI_DATABASE_URL",  // URL Realtime Database
+  projectId: "ISI_PROJECTID",       // Project ID Firebase
+};
+
+// Inisialisasi Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Dapatkan referensi ke database
+var db = firebase.database();
+
+// ===================== REaltime LISTENER =====================
+// Listener ini akan dipanggil setiap kali data "gas" berubah
+db.ref("gas").on("value", function(snapshot){
+  var val = snapshot.val();  // Ambil nilai gas dari Firebase
+
+  // Tampilkan nilai gas di HTML
+  document.getElementById("gasValue").innerText = val;
+
+  // Ambil elemen status
+  var status = document.getElementById("status");
+
+  // Tentukan status berdasarkan nilai gas
+  if(val > 400){                // Threshold bahaya bisa diubah sesuai kebutuhan
+    status.innerText = "BAHAYA!";
+    status.className = "status danger"; // Ganti background jadi merah
+  }else{
+    status.innerText = "AMAN";
+    status.className = "status safe";   // Background hijau
+  }
+});
+</script>
+
+</body>
+</html>
